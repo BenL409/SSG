@@ -7,6 +7,7 @@ from inline_markdown import (
     extract_markdown_links,
     extract_markdown_images,
 )
+from generate_page import extract_title
 
 from textnode import TextNode, TextType
 
@@ -190,6 +191,22 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             nodes,
         )
+        
+    def test_extract_title(self):
+        markdown = "# This is the title\nThis is the content of the markdown file."
+        title = extract_title(markdown)
+        self.assertEqual("This is the title", title)
+        
+    def test_extract_title_no_title(self):
+        markdown = "This is the content of the markdown file without a title."
+        with self.assertRaises(Exception) as context:
+            extract_title(markdown)
+        self.assertTrue("markdown does not contain a title" in str(context.exception))
+        
+    def test_extract_title_whitespace(self):
+        markdown = "   #    This is the title with extra whitespace    \nThis is the content of the markdown file."
+        title = extract_title(markdown)
+        self.assertEqual("This is the title with extra whitespace", title)
 
 
 if __name__ == "__main__":
